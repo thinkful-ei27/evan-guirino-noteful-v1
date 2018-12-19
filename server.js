@@ -2,6 +2,7 @@
 const express = require('express');
 const { PORT } = require('./config');
 const { logger } = require('./middleware/logger');
+const morgan = require('morgan');
 
 
 // Load array of notes
@@ -10,7 +11,7 @@ const simDB = require('./db/simDB');
 const notes = simDB.initialize(data);
 
 const app = express();
-app.use(logger);
+app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(express.json());
 
