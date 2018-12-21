@@ -50,12 +50,16 @@ notesRouter.put('/notes/:id', (req, res, next) => {
       updateObj[field] = req.body[field];
     }
   });
-
+  if (!updateObj.title) {
+    const err = new Error('Missing `title` in request body');
+    err.status = 400;
+    return next(err);
+  }
   notes.update(id, updateObj).then(item => {
     if (item) {
       return res.json(item);
     } else {
-      next()
+      next();
     }})
     .catch(err => {
      next(err);
@@ -79,14 +83,14 @@ notesRouter.post('/notes', (req, res, next) => {
 
   notes.create(newItem)
     .then(item => {
-      if(item) {
-        res.location(`http://${req.headers.host}/api/notes/${item.id}`)
+      if (item) {
+        res.location(`http://${req.headers.host}/api/notes/${item.id}`).status(201).json(item)
       } else {
         next();
       }
     })
     .catch (err => {
-     next(err);
+    return next(err);
     });
 });
 
