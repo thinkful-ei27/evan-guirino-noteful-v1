@@ -16,9 +16,9 @@ notesRouter.get('/notes', (req, res, next) => {
     })
     .catch(err => {
       if (err) {
-       next(err);
+        next(err);
       }
-    }); 
+    });
 });
 
 notesRouter.get('/notes/:id', (req, res, next) => {
@@ -33,7 +33,7 @@ notesRouter.get('/notes/:id', (req, res, next) => {
       }
     })
     .catch(err => {
-     return next(err);
+      return next(err);
     });
 });
 
@@ -55,14 +55,16 @@ notesRouter.put('/notes/:id', (req, res, next) => {
     err.status = 400;
     return next(err);
   }
-  notes.update(id, updateObj).then(item => {
-    if (item) {
-      return res.json(item);
-    } else {
-      next();
-    }})
+  notes.update(id, updateObj)
+    .then(item => {
+      if (item) {
+        return res.json(item);
+      } else {
+        next();
+      }
+    })
     .catch(err => {
-     next(err);
+      next(err);
     });
 }
 );
@@ -78,19 +80,19 @@ notesRouter.post('/notes', (req, res, next) => {
   if (!newItem.title) {
     const err = new Error('Missing `title` in request body');
     err.status = 400;
-     next(err);
+    return next(err);
   }
 
   notes.create(newItem)
     .then(item => {
       if (item) {
-        res.location(`http://${req.headers.host}/api/notes/${item.id}`).status(201).json(item)
+        res.location(`http://${req.headers.host}/api/notes/${item.id}`).status(201).json(item);
       } else {
         next();
       }
     })
-    .catch (err => {
-    return next(err);
+    .catch(err => {
+      return next(err);
     });
 });
 
@@ -101,13 +103,13 @@ notesRouter.delete('/notes/:id', (req, res, next) => {
     .then(item => {
       if (item) {
         res.status(204).end();
-      } 
+      }
       next();
     })
     .catch(err => {
       res.status(500);
       next(err);
-    }); 
+    });
 });
 
 module.exports = notesRouter;
