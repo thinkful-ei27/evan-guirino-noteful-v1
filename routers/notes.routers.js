@@ -1,24 +1,20 @@
 'use strict';
 
 const express = require('express');
-const notesRouter = express.Router();
+
 const data = require('../db/notes');
 const simDB = require('../db/simDB');
 const notes = simDB.initialize(data);
+
+const notesRouter = express.Router();
 
 notesRouter.get('/notes', (req, res, next) => {
   const { searchTerm } = req.query;
 
 
   notes.filter(searchTerm)
-    .then(list => {
-      res.json(list);
-    })
-    .catch(err => {
-      if (err) {
-        next(err);
-      }
-    });
+    .then(list => res.json(list))
+    .catch(err => next(err));
 });
 
 notesRouter.get('/notes/:id', (req, res, next) => {
@@ -33,7 +29,7 @@ notesRouter.get('/notes/:id', (req, res, next) => {
       }
     })
     .catch(err => {
-      return next(err);
+      next(err);
     });
 });
 
@@ -58,7 +54,7 @@ notesRouter.put('/notes/:id', (req, res, next) => {
   notes.update(id, updateObj)
     .then(item => {
       if (item) {
-        return res.json(item);
+        res.json(item);
       } else {
         next();
       }
@@ -103,8 +99,9 @@ notesRouter.delete('/notes/:id', (req, res, next) => {
     .then(item => {
       if (item) {
         res.status(204).end();
+      } else {
+        next();
       }
-      next();
     })
     .catch(err => {
       res.status(500);
